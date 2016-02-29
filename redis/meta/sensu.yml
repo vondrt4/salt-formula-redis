@@ -1,0 +1,14 @@
+{%- from "redis/map.jinja" import server with context %}
+check:
+  local_redis_server_proc:
+    command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -C redis-server -u redis -c 1:1"
+    interval: 60
+    occurrences: 1
+    subscribers:
+    - local-redis-server
+  local_redis_open_slots:
+    command: "PATH=$PATH:/etc/sensu/plugins check_redis.pl -H localhost -A -a connected_clients -w 10 -c 900"
+    interval: 60
+    occurrences: 1
+    subscribers:
+    - local-redis-server

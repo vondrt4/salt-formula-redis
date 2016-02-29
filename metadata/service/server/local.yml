@@ -1,5 +1,7 @@
 applications:
 - redis
+classes:
+- service.redis.support
 parameters:
   redis:
     server:
