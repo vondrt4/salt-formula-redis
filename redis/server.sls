@@ -10,19 +10,13 @@ vm.overcommit_memory:
   sysctl.present:
     - value: 1
 
-{% if (grains.os == 'Ubuntu' and grains.osrelease > '13.10') or grains.os_family == 'Arch' %}
-{% set conf_file_source = 'salt://redis/files/redis.conf.2.8' %}
-{% else %}
-{% set conf_file_source = 'salt://redis/files/redis.conf.2.2' %}
-{% endif %}
-
-{{ server.conf_dir }}:
+{{ server.conf_dir }}/redis.conf:
   file.managed:
-  - source: {{ conf_file_source }}
+  - source: salt://redis/files/{{ server.version }}/redis.conf
   - template: jinja
-  - user: root
-  - group: root
-  - mode: 644
+  - user: redis
+  - group: redis
+  - mode: 640
   - require:
     - pkg: redis_packages
 
@@ -31,6 +25,6 @@ redis_service:
   - enable: true
   - name: {{ server.service }}
   - watch:
-    - file: {{ server.conf_dir }}
+    - file: {{ server.conf_dir }}/redis.conf
 
 {%- endif %}
